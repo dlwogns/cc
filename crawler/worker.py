@@ -4,12 +4,21 @@ from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
 from readability import Document
-import traceback
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
+import zmq
 
+import traceback
+
+# selenium chrome driver
 driver = webdriver.Chrome()
+
+# zmq context
+context = zmq.Context()
+# if preprocessor modified, pub-sub have to be considered
+socket = context.socket(zmq.PUSH)
+socket.bind("tcp://127.0.0.1:5555")
 
 def worker(thread_id, url_queue, visited_urls, lock):
     try:
@@ -37,7 +46,8 @@ def worker(thread_id, url_queue, visited_urls, lock):
             
             # html preprocessing for define whether page contains article info
             html_content = driver.page_source
-            
+            print("zmq push")
+            socket.send_string(html_content)
             
         driver.quit()
     except:
