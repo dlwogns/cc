@@ -23,6 +23,8 @@ def worker(thread_id, url_queue, visited_urls, lock):
             print(len(visited_urls))
             url = url_queue.get(block=True)
             driver.get(url)
+            
+            # get all url from <a> 
             links = driver.find_elements(By.TAG_NAME, "a")
             
             for link in links:
@@ -32,6 +34,10 @@ def worker(thread_id, url_queue, visited_urls, lock):
                         if href not in visited_urls:
                             url_queue.put(href)
                             visited_urls.add(href)
+            
+            # html preprocessing for define whether page contains article info
+            html_content = driver.page_source
+            
             
         driver.quit()
     except:

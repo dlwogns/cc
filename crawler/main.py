@@ -1,7 +1,7 @@
 import multiprocessing as mp
 from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
-from get_res import worker
+from crawler.worker import worker
 import threading
 import traceback
 
