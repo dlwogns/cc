@@ -47,7 +47,9 @@ def worker(thread_id, url_queue, visited_urls, lock):
             # html preprocessing for define whether page contains article info
             html_content = driver.page_source
             print("zmq push")
-            socket.send_string(html_content)
+            html_json = {"html_content":html_content, "url":url}
+            #socket.send_string(html_content)
+            socket.send_json(html_json)
             
         driver.quit()
     except:
