@@ -30,13 +30,12 @@ def extract_article_using_readability(url):
     
     return title, content
 
-article_url = "https://edition.cnn.com/2024/09/20/middleeast/israel-hamas-eden-yerushalmi-sisters-interview-intl/index.html"
+article_url = "https://edition.cnn.com"
 
 try:
     # 페이지의 모든 링크(a 태그의 href 속성) 추출
     links = driver.find_elements(By.TAG_NAME, "a")
     print("start")
-    print(links)
     # 링크를 출력
     herf_list = []
     for link in links:
@@ -45,6 +44,7 @@ try:
             herf_list.append(href)
     print(herf_list)
     title, content = extract_article_using_readability(article_url)
+    print("title, content")
     print(title)
     print(content)
             

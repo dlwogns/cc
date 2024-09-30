@@ -2,7 +2,7 @@ import multiprocessing as mp
 from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 from worker import worker
-import url_allowed_checker as ac
+import utils.url_allowed_checker as ac
 import threading
 import traceback
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     try:
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             for i in range(max_workers):
-                executor.submit(worker, i, url_queue, visited_urls, lock)            # set default url
+                executor.submit(worker, i, url_queue, visited_urls, lock, disallowed_list)            # set default url
             url_queue.put(url)
     except:
         print(traceback.format_exc())

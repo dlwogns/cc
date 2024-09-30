@@ -20,7 +20,7 @@ context = zmq.Context()
 socket = context.socket(zmq.PUSH)
 socket.bind("tcp://127.0.0.1:5555")
 
-def worker(thread_id, url_queue, visited_urls, lock):
+def worker(thread_id, url_queue, visited_urls, lock, disallowed_list):
     try:
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Headless 모드
