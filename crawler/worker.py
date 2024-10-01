@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import requests
 from bs4 import BeautifulSoup
-from readability import Document
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
@@ -14,13 +13,18 @@ import traceback
 # selenium chrome driver
 driver = webdriver.Chrome()
 
-# zmq context
-context = zmq.Context()
-# if preprocessor modified, pub-sub have to be considered
-socket = context.socket(zmq.PUSH)
-socket.bind("tcp://127.0.0.1:5555")
 
-def worker(thread_id, url_queue, visited_urls, lock, disallowed_list):
+context2 = zmq.Context()
+socket2 = context2.socket(zmq.PULL)
+socket2.connect("tcp://127.0.0.1:5555")
+
+def worker(thread_id, url_queue, visited_urls, lock, disallowed_list, zmq_port):
+    print("worker start")
+    # zmq context
+    context = zmq.Context()
+    # if preprocessor modified, pub-sub have to be considered
+    socket = context.socket(zmq.PUSH)
+    socket.bind(f"tcp://127.0.0.1:{zmq_port}")
     try:
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Headless 모드
@@ -30,7 +34,7 @@ def worker(thread_id, url_queue, visited_urls, lock, disallowed_list):
         
         while True:
             print(len(visited_urls))
-            url = url_queue.get(block=True)
+            url = socket2.recv_string()
             driver.get(url)
             
             # get all url from <a> 
@@ -42,7 +46,7 @@ def worker(thread_id, url_queue, visited_urls, lock, disallowed_list):
                     if href:
                         if href not in visited_urls:
                             url_queue.put(href)
-                            visited_urls.add(href)
+                            visited_urls[href] = 1
             
             # html preprocessing for define whether page contains article info
             html_content = driver.page_source
