@@ -116,6 +116,7 @@ if __name__ == "__main__":
     context = zmq.Context()
     socket = context.socket(zmq.PULL)
     socket.connect("tcp://127.0.0.1:5555")
+    print("preprocessor start")
     try:
         while True:
             html_content = socket.recv_json()

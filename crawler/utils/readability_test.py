@@ -53,12 +53,11 @@ def normalize_string(s):
 if __name__ == "__main__":
     context = zmq.Context()
     socket = context.socket(zmq.PULL)
-    socket.connect("tcp://127.0.0.1:5555")
+    socket.connect("tcp://127.0.0.1:5556")
     
     try:
         while True:
             html_content = socket.recv_json()
-            print(html_content["url"])
             url = html_content["url"]
             doc = Document(html_content["html_content"])
             
